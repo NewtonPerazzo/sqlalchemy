@@ -44,6 +44,7 @@ session.commit()
 
 #  SELECT
 data = session.query(Movies).all()
+
 print(data)
 
 session.close()
