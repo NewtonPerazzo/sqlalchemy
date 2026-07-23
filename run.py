@@ -10,6 +10,6 @@ repoActors = ActorsRepository()
 # repo.update('sdhjkgsd', Movies(title='Avengers Ultimato', gender='fictional', year_movie=2019))
 # repo.delete('Avengers Ultimato')
 
-data = repo.select()
+data = repo.select_horror_movies()
 data_actors = repoActors.select()
 print(data)
