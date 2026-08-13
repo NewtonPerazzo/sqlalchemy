@@ -1,0 +1,54 @@
+ORM - Object relational mapping:
+    Connect and make actions in DB
+        - queries, inserts, deletes
+
+4 main elements:
+    - 1. Structural mapping: tables representation using classes
+    - 2. Identity map: control the entity loading in memory
+        ex.: 
+            user1 = get_user_by_id(1)
+            user2 = get_user_by_id(1)
+
+            The ORM doesn't duplicate this value in memory, It just uses the same memory
+    - 3. Queries abstraction: the ORM has your own way to make queries
+        ex.: 
+            users = session.query(User);filter(User.age > 18)
+            But you can use SQL query:
+            query = text("SELECT * FROM users WHERE id = :user_id")
+            result = session.execute(query, {"user_id": 1})
+    - 4. Unit of work: It group many SQL commands to be executed  and create a defined context to execute eveything
+    making sense
+        ex.:
+            user = User(...)
+            session.add(user)
+
+            order = Order(...)
+            session.add(order)
+
+            inventory.quantity -= 1
+            session.commit()
+
+            It isn't just a insert, It makes an update. We group all this commands in a unit work and
+            the ORM:
+                - analyse what was changed
+                - devide the correct order
+                - generate the SQL
+                - execute inside a transaction
+                - makes the commit or rollback
+
+Diference between DB Connectors (psycopg2, sqlite3, mysqlclient, asyncpg):
+    - ORM has connectors with more features
+    - Connectors doesn't have all knowledge about your tables/classes context
+    - ORMs are heavier, but they pay off due to their functionalities.
+
+If you want a system with a great performance, with so many requests or so many data, use DB Connectors:
+    - heavy analitcs
+    - massive data process
+    - data pipelines
+    - complex relatories
+
+If you want a intense data trusty:
+    - APIs web
+    - authentication
+    - ERPs
+    - SaaS with very well defined business rules
