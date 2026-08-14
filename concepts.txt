@@ -52,3 +52,56 @@ If you want a intense data trusty:
     - authentication
     - ERPs
     - SaaS with very well defined business rules
+
+
+Performance in queries:
+
+products = db.query(Product).all() 
+for product in products: 
+    print(product.category.name) 
+    # if we have 100 products, this code makes 101 consults because:
+    # - it get all products (1 query)
+    # - after, it makes a consult for category for each product (100 queries)
+
+selectinload:
+    from sqlalchemy import select
+    from sqlalchemy.orm import selectinload
+
+    stmt = (
+        select(Product)
+        .options(selectinload(Product.category))
+    )
+
+    - selectinload gets all products, indetifies the category FK in products, gets all categories identified
+    and return data, making only 2 queries (for this example):
+
+    SELECT * FROM products;
+
+    Return example:
+        Product 1 → category_id = 5
+        Product 2 → category_id = 8
+        Product 3 → category_id = 5
+        Product 4 → category_id = 12
+        Product 5 → category_id = 8
+
+    SELECT * FROM categories WHERE categories.id IN (5, 8, 12);
+
+    After, sqlalchemy associate the objects:
+        Product 1 ──→ Category 5
+        Product 2 ──→ Category 8
+        Product 3 ──→ Category 5
+        Product 4 ──→ Category 12
+        Product 5 ──→ Category 8
+
+    When we interate using for:
+        for product in products:
+            print(product.category.name)
+    the categories were already loaded
+
+joinedload:
+    Makes a query like this:
+        SELECT products.*, categories.*
+        FROM products
+        LEFT JOIN categories
+            ON products.category_id = categories.id;
+    
